@@ -1,14 +1,9 @@
 from django.urls import include, path
-from rest_framework import routers
-from . import views
+from .views import PageList, PageDetail
 
-router = routers.DefaultRouter()
-router.register(r'pages', views.PageViewSet)
-router.register(r'videos', views.VideoViewSet)
-router.register(r'audios', views.AudioViewSet)
-router.register(r'texts', views.TextViewSet)
+app_name = 'pages'
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('pages/', PageList.as_view()),
+    path('pages/<int:pk>', PageDetail.as_view()),
 ]

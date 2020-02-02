@@ -1,23 +1,58 @@
 from rest_framework import serializers
+from django.http import HttpRequest
 
 from .models import Page, Video, Audio, Text
 
-class PageSerializer(serializers.HyperlinkedModelSerializer):
+class PageSerializer(serializers.ModelSerializer):
+    details_endpoint = serializers.SerializerMethodField()
+    
+
     class Meta:
         model = Page
-        fields = ('title', 'counter')
+        fields = 'id', 'title', 'counter', 'details_endpoint'
 
-class VideoSerializer(serializers.HyperlinkedModelSerializer):
+    def get_details_endpoint(self, obj):
+        request = self.context.get('request')
+        url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
+        return url + str(obj.id)
+
+    
+
+class PageDetailsSerializer(PageSerializer):
+    videos = serializers.SerializerMethodField()
+    audios = serializers.SerializerMethodField()
+    texts  = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Page
+        fields = 'id', 'title', 'counter', 'videos', 'audios', 'texts'
+
+    def get_videos(self, obj):
+        videos = Video.objects.all().order_by('title')
+        video_serializer = VideoSerializer(videos, many=True)
+        return video_serializer.data
+
+    def get_audios(self, obj):
+        audios = Audio.objects.all().order_by('title')
+        audio_serializer = AudioSerializer(audios, many=True)
+        return audio_serializer.data
+
+    def get_texts(self, obj):
+        texts = Text.objects.all().order_by('title')
+        text_serializer = TextSerializer(texts, many=True)
+        return text_serializer.data
+
+class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
-        fields = ('title', 'counter', 'video_url', 'subs_url')
+        fields = '__all__'
 
-class AudioSerializer(serializers.HyperlinkedModelSerializer):
+class AudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Audio
-        fields = ('title', 'counter', 'bitrate')
+        fields = '__all__'
 
-class TextSerializer(serializers.HyperlinkedModelSerializer):
+class TextSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Audio
-        fields = ('title', 'counter', 'content')
+        model = Text
+        fields = '__all__'
