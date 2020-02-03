@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.http import HttpRequest
-
 from .models import Page, Video, Audio, Text
 
 class PageSerializer(serializers.ModelSerializer):
@@ -28,17 +27,17 @@ class PageDetailsSerializer(PageSerializer):
         fields = 'id', 'title', 'counter', 'videos', 'audios', 'texts'
 
     def get_videos(self, obj):
-        videos = Video.objects.all().order_by('title')
+        videos = obj.myapi_video.order_by('title')
         video_serializer = VideoSerializer(videos, many=True)
         return video_serializer.data
 
     def get_audios(self, obj):
-        audios = Audio.objects.all().order_by('title')
+        audios = obj.myapi_audio.order_by('title')
         audio_serializer = AudioSerializer(audios, many=True)
         return audio_serializer.data
 
     def get_texts(self, obj):
-        texts = Text.objects.all().order_by('title')
+        texts = obj.myapi_text.order_by('title')
         text_serializer = TextSerializer(texts, many=True)
         return text_serializer.data
 
