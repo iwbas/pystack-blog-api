@@ -1,7 +1,7 @@
 from django.db import models
 
 class CommonInfo(models.Model):
-    title = models.CharField(max_length=140, default="Без названия")
+    title = models.CharField(max_length=140, default="Без заголовка")
     counter = models.IntegerField(default=0)
 
     class Meta:

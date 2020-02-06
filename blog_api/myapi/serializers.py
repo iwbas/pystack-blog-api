@@ -15,8 +15,6 @@ class PageSerializer(serializers.ModelSerializer):
         url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
         return url + str(obj.id)
 
-    
-
 class PageDetailsSerializer(PageSerializer):
     videos = serializers.SerializerMethodField()
     audios = serializers.SerializerMethodField()
